@@ -9,13 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ponggameapp">
-
-        <activity android:name=".pongactivity"
+        <activity android:name=".MainActivity2" />
+        <activity
+            android:name=".pongactivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Theme.Ponggameapp">
-        </activity>
-        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.Ponggameapp" />
+        <activity
+            android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Ponggameapp">

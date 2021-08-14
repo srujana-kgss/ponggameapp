@@ -29,7 +29,7 @@ public class ball {
 
     public void moveball(Canvas canvas){
       cx+=velocity_x;
-      cy+=velocity_y;
+      cy+=velocity_y;                                                //move ball
       if(cy<radius){
           cy=radius;
       }else if (cy+radius>canvas.getHeight()){

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ponggameapp</string>
+    <string name="state">ready</string>
+
+    <string name="mode_win">you won</string>
+    <string name="mode_lose">lose</string>
+    <string name="mode_pause">paused</string>
+
+
 </resources>

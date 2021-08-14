@@ -6,17 +6,37 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
+import java.util.Random;
+import android.os.Handler;
+
 
 
 public class pongtable extends SurfaceView implements SurfaceHolder.Callback {
 
 public static final String TAG = pongtable.class.getSimpleName();
+
+
+private GameThread mGame;
+private TextView mStatus;
+private TextView mScorePlayer;
+private TextView mScoreOpponent;
+MediaPlayer beepsound;
+
+
+
+
+
 
    private player mplayer;
    private player mopponent;
@@ -42,7 +62,28 @@ public static final String TAG = pongtable.class.getSimpleName();
      mholder=getHolder();
      mholder.addCallback(this);
 
-     //game thread or game loop initialize
+
+     mGame=new GameThread(this.getContext(), mholder, this
+             , new Handler(){
+         @Override
+         public void handleMessage(@NonNull Message msg) {
+             super.handleMessage(msg);
+             mStatus.setVisibility(msg.getData().getInt("visibility"));
+             mStatus.setText(msg.getData().getString("text"));
+         }
+     }, new Handler() {
+         @Override
+         public void handleMessage(@NonNull Message msg) {
+             super.handleMessage(msg);
+             mScorePlayer.setText(msg.getData().getString("player"));
+             mScoreOpponent.setText(msg.getData().getString("opponent"));
+         }
+     });
+
+
+
+
+
      TypedArray a =Ctx.obtainStyledAttributes(attr,R.styleable.PongTable);
      int racketheight=a.getInteger(R.styleable.PongTable_racketHeight,340);
      int racketwidtt=a.getInteger(R.styleable.PongTable_racketWidth,100);
@@ -81,8 +122,8 @@ public static final String TAG = pongtable.class.getSimpleName();
      // draw bounds
      mTableboundpaint=new Paint();
      mTableboundpaint.setAntiAlias(true);
-     mTableboundpaint.setColor(Color.BLACK);
-     mTableboundpaint.setStyle(Paint.Style.FILL);
+     mTableboundpaint.setColor(ContextCompat.getColor(mcontext,R.color.player_color));
+     mTableboundpaint.setStyle(Paint.Style.STROKE);
      mTableboundpaint.setStrokeWidth(15.0f);
 
 
@@ -94,26 +135,27 @@ public static final String TAG = pongtable.class.getSimpleName();
 
 
 
-    public pongtable(Context context, AttributeSet attrs) {
+    public pongtable(Context context, AttributeSet attrs) {  //
         super(context, attrs);
         initpongtable(context,attrs);
     }
 
     public pongtable(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initpongtable(context,attrs);
+        initpongtable(context,attrs);  //
     }
 
 
-    @Override
-    protected  void onDraw(Canvas canvas){
-     super.onDraw(canvas);
+    @Override                  //crt
+    public  void draw(Canvas canvas){
+     super.draw(canvas);
      canvas.drawColor(ContextCompat.getColor(mcontext,R.color.table_color));
      canvas.drawRect(0,0,mtablewidth,mtableheight,mTableboundpaint);
 
 
      int middle = mtablewidth/2;
      canvas.drawLine(middle,1,middle,mtableheight-1,mnetpaint);
+     mGame.setscoretext(String.valueOf(mplayer.score),String.valueOf(mopponent.score));
 
      mplayer.draw(canvas);
      mopponent.draw(canvas);
@@ -127,7 +169,7 @@ public static final String TAG = pongtable.class.getSimpleName();
      if(mopponent.bounds.top>mball.cy){
        moveplayer(mopponent,mopponent.bounds.left,mopponent.bounds.top-PHY_RACKET_SPEED);
      }else if(mopponent.bounds.top+mopponent.getRacketheight()< mball.cy){
-      moveplayer(mopponent,mopponent.bounds.left,mopponent.bounds.top-PHY_RACKET_SPEED);
+      moveplayer(mopponent,mopponent.bounds.left,mopponent.bounds.top+PHY_RACKET_SPEED);
      }
 
     }
@@ -136,31 +178,75 @@ public static final String TAG = pongtable.class.getSimpleName();
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
+     mGame.setRunning(true);
+     mGame.start();
     }
 
     @Override
     public void surfaceChanged( SurfaceHolder surfaceholder, int format, int width, int height) {
       mtableheight=height;
       mtablewidth=width;
+      mGame.setUpNewRound();
     }
 
     @Override
     public void surfaceDestroyed( SurfaceHolder surfaceholder) {
-
+       boolean retry = true;
+       mGame.setRunning(false);
+       while (retry){
+           try{
+               mGame.join();
+               retry=false;
+           }catch (InterruptedException e){
+               e.printStackTrace();
+           }
+       }
     }
 
 
  @Override
  public boolean onTouchEvent(MotionEvent event) {
-  return super.onTouchEvent(event);
+        if(!mGame.SensorsOn()){
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    if(mGame.isBetweenRounds()){
+                        mGame.setState(GameThread.STATE_RUNNING);
+                    }else {
+                        if(istouchonracket(event,mplayer)){
+                            moving=true;
+                            mlasttouchY=event.getY();
+                        }
+                    }break;
+                case  MotionEvent.ACTION_MOVE:
+                    if(moving){
+                        float y =event.getY();
+                        float dy =y-mlasttouchY;
+                        mlasttouchY =y;
+                        moverplayerracket(dy,mplayer);
+                    }break;
+                case MotionEvent.ACTION_UP:
+                    moving=false;
+                    break;
+            }
+        }else {
+            if(event.getAction()==MotionEvent.ACTION_DOWN){
+                if(mGame.isBetweenRounds()){
+                    mGame.setState(GameThread.STATE_RUNNING);
+                }
+            }
+        }
+  return true;
+ }
+
+ public GameThread getGame(){
+        return mGame;
  }
 
 
 
-public void moverplayerracket(float dy,player mplayer){
+public void moverplayerracket(float dy,player player){
 synchronized (mholder){
- moveplayer(mplayer,mplayer.bounds.left,mplayer.bounds.top+dy);
+ moveplayer(player,player.bounds.left,player.bounds.top+dy);
 }
 }
 
@@ -169,29 +255,92 @@ synchronized (mholder){
 
 
 
-public boolean istouchonracket(MotionEvent event,player mplayer){
-     return mplayer.bounds.contains(event.getX(),event.getY());
+public boolean istouchonracket(MotionEvent event,player player){
+     return player.bounds.contains(event.getX(),event.getY());
 }
 
 
 
-public  synchronized void moveplayer(player mplayer,float left,float top){
+public  synchronized void moveplayer(player player,float left,float top){
      if(left<2){
-      left=2;
-     }else if(left + mplayer.getRacketwidth()>=mtablewidth-2){
-      left = mtablewidth - mplayer.getRacketwidth() - 2;
+        left=2;
+     }else if(left + player.getRacketwidth()>=mtablewidth-2){
+      left = mtablewidth - player.getRacketwidth() - 2;
      }
-
      if(top<0){
       top=0;
-     }else if(top + mplayer.getRacketheight()>=mtableheight){
-       top= mtableheight- mplayer.getRacketwidth()-1;
+     }else if(top + player.getRacketheight()>=mtableheight){
+       top= mtableheight- player.getRacketheight()-1;
      }
 
-     mplayer.bounds.offsetTo(left,top);
+     player.bounds.offsetTo(left,top);
     }
 
-    public void setuptable(){
+
+
+    public void update(Canvas canvas){
+
+    // collission detection code
+          if(CheckcollisionPlayer(mplayer,mball)){
+               handlecollision(mplayer,mball);                   //crt
+         }else if (CheckcollisionPlayer(mopponent,mball)){
+             handlecollision(mopponent,mball);
+          }else if(checkcollisionwithtoporbottomwall()){
+             mball.velocity_y=-mball.velocity_y;
+          }else  if(checkcollisionwithleftwall()){
+              mGame.setState(GameThread.STATE_LOSE);
+              beepsound.start();
+              return;
+         }else if(checkcollisionwithrightwall()){
+              mGame.setState(GameThread.STATE_WIN);
+              beepsound.start();
+              return;
+          }
+
+
+        if(new Random(System.currentTimeMillis()).nextFloat()<mAImoveprobability){
+            doAI();
+        }
+       mball.moveball(canvas);
+
+    }
+
+
+   private boolean CheckcollisionPlayer(player players,ball balls){ //crt
+     return players.bounds.intersects(
+             balls.cx-balls.getRadius(),
+             balls.cy- balls.getRadius(),
+             balls.cx+balls.getRadius(),
+             balls.cy+balls.getRadius()
+    );
+   }
+
+
+    private  boolean checkcollisionwithtoporbottomwall(){  //crt
+       return ((mball.cy<=mball.getRadius())||(mball.cy+mball.getRadius()>=mtableheight-1));
+    }
+
+    private  boolean checkcollisionwithleftwall(){  //crt
+       return mball.cx<=mball.getRadius();
+    }
+
+    private boolean checkcollisionwithrightwall(){   //crt
+        return mball.cx+mball.getRadius()>=mtablewidth-1;
+    }
+
+
+    private  void handlecollision(player player ,ball  ball){  //crt
+    ball.velocity_x=-ball.velocity_x*1.05f;
+    if(player==mplayer){
+   ball.cx=mplayer.bounds.right+ball.getRadius();
+    }else if (player==mopponent){
+       ball.cx=mopponent.bounds.left-ball.getRadius();
+        PHY_RACKET_SPEED=PHY_RACKET_SPEED*1.03f;
+
+    }
+    }
+
+    public void setuptable(){  //crt
         placeball();
         placeplayers();
     }
@@ -204,11 +353,21 @@ mopponent.bounds.offsetTo(mtablewidth-mopponent.getRacketwidth()-2,(mtableheight
 
 
 private void placeball(){
-        mball.cx=mtablewidth/2;
+        mball.cx=mtablewidth/2;   //crt
         mball.cy=mtableheight/2;
         mball.velocity_y=(mball.velocity_y/Math.abs(mball.velocity_y))*PHY_BALL_SPEED;
         mball.velocity_x=(mball.velocity_x/Math.abs(mball.velocity_x))*PHY_BALL_SPEED;
 }
+
+
+  public  player getplayer() {return mplayer;}
+   public  player getopponent() {return mopponent;}
+    public  ball getBall() {return mball;}
+
+
+    public void setScorePlayer(TextView view){mScorePlayer=view;}   //crt
+    public void setScoreOpponent(TextView view){mScoreOpponent=view;}
+    public void setStatusview(TextView view){mStatus=view;}
 
 
 }
