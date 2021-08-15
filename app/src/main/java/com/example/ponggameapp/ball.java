@@ -32,7 +32,7 @@ public class ball {
       cy+=velocity_y;                                                //move ball
       if(cy<radius){
           cy=radius;
-      }else if (cy+radius>canvas.getHeight()){
+      }else if (cy+radius>=canvas.getHeight()){
           cy= canvas.getHeight() - radius-1;
       }
     }

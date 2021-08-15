@@ -1,11 +1,16 @@
 package com.example.ponggameapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -27,7 +32,19 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
     private gamethreadtwo nGame;
     private TextView nStatus;
     private TextView nScorePlayer;
-    private TextView nScoreOpponent;
+    MediaPlayer mp;
+
+    Integer[] integervalue = {1,-1};
+    int y = randBetween(0,1);
+
+
+
+
+
+
+
+
+
 
     private player nplayer;
     private player nopponent;
@@ -91,20 +108,20 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
 
 
 
-        // set opponent
+
         Paint opponentpaint=new Paint();
         opponentpaint.setAntiAlias(true);
         opponentpaint.setColor(ContextCompat.getColor(ncontext,R.color.opponent_color));
         nopponent=new player(racketwidthplayer,2000,opponentpaint);
 
 
-        // set ball
+
         Paint ballpaint=new Paint();
         ballpaint.setAntiAlias(true);
         ballpaint.setColor(ContextCompat.getColor(ncontext,R.color.ball_color));
         nball=new ball(ballradius,ballpaint);
 
-        // draw middle line
+
         nnetpaint=new Paint();
         nnetpaint.setAntiAlias(true);
         nnetpaint.setColor(Color.WHITE);
@@ -114,10 +131,10 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
         nnetpaint.setPathEffect(new DashPathEffect(new float[]{5,5},0));
 
 
-        // draw bounds
+
         nTableboundpaint=new Paint();
         nTableboundpaint.setAntiAlias(true);
-        nTableboundpaint.setColor(ContextCompat.getColor(ncontext,R.color.opponent_color));
+        nTableboundpaint.setColor(ContextCompat.getColor(ncontext,R.color.player_color));
         nTableboundpaint.setStyle(Paint.Style.STROKE);
         nTableboundpaint.setStrokeWidth(15.0f);
 
@@ -148,6 +165,10 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
         initpongtabletwo(context,attrs);
     }
 
+    private static int randBetween(int start, int end){
+        return start+ (int) Math.round(Math.random() * (end-start));
+    }
+
 
 
 
@@ -160,38 +181,37 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
 
         int middle = ntablewidth/2;
         canvas.drawLine(middle,1,middle,ntableheight-1,nnetpaint);
-        nGame.setscoretextfortwo(String.valueOf(nplayer.score),String.valueOf(nopponent.score));
+        nGame.setscoretextfortwo(String.valueOf(nplayer.score));
+
+
 
         nplayer.draw(canvas);
         nopponent.draw(canvas);
         nball.draw(canvas);
     }
 
-    public void updating(Canvas canvas){// collission detection code
+    public void updating(Canvas canvas){
         if(CheckcollisionPlayerfortwo(nplayer,nball)){
-            handlecollision(nplayer,nball);                   //crt
+            handlecollision(nplayer,nball);
+
+            mp=MediaPlayer.create(ncontext,R.raw.beep);
+            mp.setLooping(false);
+            synchronized (mp) {
+                mp.start(); }
         }else if (CheckcollisionPlayerfortwo(nopponent,nball)){
             handlecollision(nopponent,nball);
             getplayerfortwo().score++;
             getplayerfortwo().score++;
+            mp.start();
         }else if(checkcollisionwithtoporbottomwallfortwo()){
             nball.velocity_y=-nball.velocity_y;
         }else  if(checkcollisionwithleftwallfortwo()){
             nGame.setStatefortwo(gamethreadtwo.STATETWO_LOSE);
-            return;
-        }else if(checkcollisionwithrightwallfortwo()){
-            nGame.setStatefortwo(gamethreadtwo.STATETWO_WIN);
-            return;
+            nScorePlayer.setText("score:"+getplayerfortwo().score);
+         return;
         }
 
-
-     //   if(new Random(System.currentTimeMillis()).nextFloat()<mAImoveprobability){
-      //      doAI();
-      //  }
-        nball.moveball(canvas);
-
-
-    }
+        nball.moveball(canvas); }
 
     @Override
     public void surfaceCreated( SurfaceHolder holder) {
@@ -281,9 +301,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
         return nball.cx<=nball.getRadius();
     }
 
-    private boolean checkcollisionwithrightwallfortwo(){   //crt
-        return nball.cx+nball.getRadius()>=ntablewidth-1;
-    }
+
 
 
     private  void handlecollision(player player ,ball  ball){  //crt
@@ -293,6 +311,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
         }else if (player==nopponent){
             ball.cx=nopponent.bounds.left-ball.getRadius();
             PHY_RACKET_SPEED=PHY_RACKET_SPEED*1.03f;
+
 
         }
     }
@@ -338,18 +357,18 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     private void placeballfortwo(){
-        nball.cx=ntablewidth/2;   //crt
+        nball.cx=ntablewidth/2;
         nball.cy=ntableheight/2;
-        nball.velocity_y=(nball.velocity_y/Math.abs(nball.velocity_y))*PHY_BALL_SPEED;
-        nball.velocity_x=(nball.velocity_x/Math.abs(nball.velocity_x))*PHY_BALL_SPEED;
+        nball.velocity_y=integervalue[y]*(nball.velocity_y/Math.abs(nball.velocity_y))*PHY_BALL_SPEED;
+        nball.velocity_x=-(nball.velocity_x/Math.abs(nball.velocity_x))*PHY_BALL_SPEED;
     }
 
     public  player getplayerfortwo() {return nplayer;}
-    public  player getopponentfortwo() {return nopponent;}
-    public  ball getBallfortwo() {return nball;}
+
+    //public  ball getBallfortwo() {return nball;}
 
 
     public void setScorePlayerfortwo(TextView view){nScorePlayer=view;}   //crt
-    public void setScoreOpponentfortwo(TextView view){nScoreOpponent=view;}
+
     public void setStatusviewfortwo(TextView view){nStatus=view;}
 }

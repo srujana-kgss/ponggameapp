@@ -3,6 +3,7 @@ package com.example.ponggameapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
 MediaPlayer gamestartsound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,5 +33,11 @@ MediaPlayer gamestartsound;
         startActivity(intent);
         gamestartsound.start();
 
+    }
+
+    public void scoring(View view) {
+
+        Intent intent = new Intent(MainActivity.this,scoreforSingleplayer.class);
+        startActivity(intent);
     }
 }

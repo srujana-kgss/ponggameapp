@@ -20,8 +20,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/scoretext"
@@ -35,10 +34,10 @@
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.578"
+        app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pongtabletwo"
-        app:layout_constraintVertical_bias="0.205" />
+        app:layout_constraintVertical_bias="0.27" />
 
     <TextView
         android:id="@+id/playertext"
@@ -57,22 +56,21 @@
         app:layout_constraintTop_toTopOf="@+id/pongtabletwo"
         app:layout_constraintVertical_bias="0.079" />
 
-    <TextView
-        android:id="@+id/opponenettext"
-        android:layout_width="194dp"
-        android:layout_height="65dp"
 
-        android:layout_marginBottom="236dp"
-        android:gravity="center"
-        android:text="opponent"
-        android:textColor="@color/white"
-        android:textSize="15sp"
+    <Button
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.854"
+        app:layout_constraintHorizontal_bias="0.618"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pongtabletwo"
-        app:layout_constraintVertical_bias="0.079" />
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.047" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

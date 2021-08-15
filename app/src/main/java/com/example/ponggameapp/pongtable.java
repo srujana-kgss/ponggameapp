@@ -31,7 +31,10 @@ private GameThread mGame;
 private TextView mStatus;
 private TextView mScorePlayer;
 private TextView mScoreOpponent;
-MediaPlayer beepsound;
+MediaPlayer mediaPlayer;
+Integer[] integer = {1,-1};
+ int x = randBetween(0,1);
+
 
 
 
@@ -51,6 +54,7 @@ MediaPlayer beepsound;
     SurfaceHolder mholder;
     public static float  PHY_RACKET_SPEED =15.0f;
     public static float  PHY_BALL_SPEED =15.0f;
+
     //for AI
     private float mAImoveprobability;
     private boolean moving=false;
@@ -127,8 +131,12 @@ MediaPlayer beepsound;
      mTableboundpaint.setStrokeWidth(15.0f);
 
 
-     mAImoveprobability=0.8f;
+     mAImoveprobability=0.7f;
 
+    }
+
+    private static int randBetween(int start, int end){
+        return start+ (int) Math.round(Math.random() * (end-start));
     }
 
 
@@ -282,18 +290,22 @@ public  synchronized void moveplayer(player player,float left,float top){
 
     // collission detection code
           if(CheckcollisionPlayer(mplayer,mball)){
-               handlecollision(mplayer,mball);                   //crt
+               handlecollision(mplayer,mball);
+               mediaPlayer=MediaPlayer.create(mcontext,R.raw.beep);
+               mediaPlayer.setLooping(false);
+               mediaPlayer.start();
          }else if (CheckcollisionPlayer(mopponent,mball)){
              handlecollision(mopponent,mball);
+              mediaPlayer=MediaPlayer.create(mcontext,R.raw.beep);
+              mediaPlayer.setLooping(false);
+              mediaPlayer.start();
           }else if(checkcollisionwithtoporbottomwall()){
              mball.velocity_y=-mball.velocity_y;
           }else  if(checkcollisionwithleftwall()){
               mGame.setState(GameThread.STATE_LOSE);
-              beepsound.start();
               return;
          }else if(checkcollisionwithrightwall()){
               mGame.setState(GameThread.STATE_WIN);
-              beepsound.start();
               return;
           }
 
@@ -355,8 +367,8 @@ mopponent.bounds.offsetTo(mtablewidth-mopponent.getRacketwidth()-2,(mtableheight
 private void placeball(){
         mball.cx=mtablewidth/2;   //crt
         mball.cy=mtableheight/2;
-        mball.velocity_y=(mball.velocity_y/Math.abs(mball.velocity_y))*PHY_BALL_SPEED;
-        mball.velocity_x=(mball.velocity_x/Math.abs(mball.velocity_x))*PHY_BALL_SPEED;
+        mball.velocity_y=integer[x]*((mball.velocity_y/Math.abs(mball.velocity_y))*PHY_BALL_SPEED);
+        mball.velocity_x=-(mball.velocity_x/Math.abs(mball.velocity_x))*PHY_BALL_SPEED;
 }
 
 
