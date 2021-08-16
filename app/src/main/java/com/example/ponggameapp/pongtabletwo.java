@@ -38,14 +38,6 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
     int y = randBetween(0,1);
 
 
-
-
-
-
-
-
-
-
     private player nplayer;
     private player nopponent;
     private ball nball;
@@ -283,7 +275,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
 
 
 
-    private boolean CheckcollisionPlayerfortwo(player players,ball balls){ //crt
+    private boolean CheckcollisionPlayerfortwo(player players,ball balls){
         return players.bounds.intersects(
                 balls.cx-balls.getRadius(),
                 balls.cy- balls.getRadius(),
@@ -293,7 +285,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
     }
 
 
-    private  boolean checkcollisionwithtoporbottomwallfortwo(){  //crt
+    private  boolean checkcollisionwithtoporbottomwallfortwo(){
         return ((nball.cy<=nball.getRadius())||(nball.cy+nball.getRadius()>=ntableheight-1));
     }
 
@@ -304,7 +296,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
 
 
 
-    private  void handlecollision(player player ,ball  ball){  //crt
+    private  void handlecollision(player player ,ball  ball){
         ball.velocity_x=-ball.velocity_x*1.05f;
         if(player==nplayer){
             ball.cx=nplayer.bounds.right+ball.getRadius();
@@ -342,7 +334,7 @@ public class pongtabletwo extends SurfaceView implements SurfaceHolder.Callback 
         player.bounds.offsetTo(left,top);
     }
 
-    public void setuptablefortwo(){  //crt
+    public void setuptablefortwo(){
         placeballfortwo();
         placeplayersfortwo();
     }

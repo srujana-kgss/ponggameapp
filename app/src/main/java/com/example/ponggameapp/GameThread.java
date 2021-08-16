@@ -13,7 +13,7 @@ import android.view.View;
 
 public class GameThread extends Thread {
 
-    //game states
+
     public static final int STATE_READY=0;
     public static final int STATE_PAUSE=1;
     public static final int STATE_RUNNING=2;
@@ -21,7 +21,7 @@ public class GameThread extends Thread {
     public static final int STATE_LOSE=4;
 
 
-    private boolean mSenorsOn;  // when tilted to get player and opponent in respective places(somes phones dont have this)
+    private boolean mSenorsOn;
     private final Context mCtx;
     private final SurfaceHolder mSurfaceHolder;
     private final Handler mGameStatusHandler;
@@ -117,13 +117,13 @@ public class GameThread extends Thread {
 
 
     public void setUpNewRound(){
-        synchronized (mSurfaceHolder){   //crt
+        synchronized (mSurfaceHolder){
             mpongtable.setuptable();
         }
 
     }
 
-    public void setRunning(boolean running){  //crt
+    public void setRunning(boolean running){
          synchronized (mRunLock){
              mRun=running;
          }
@@ -135,11 +135,11 @@ public class GameThread extends Thread {
 
     public boolean isBetweenRounds(){
         return mGameState!=STATE_RUNNING;
-    }  //crt
+    }
 
    public  void setstatustext(String text){
        Message msg =mGameStatusHandler.obtainMessage();
-        Bundle b =new Bundle();                                       //crt
+        Bundle b =new Bundle();
         b.putString("text",text);
         b.putInt("visibility", View.VISIBLE);
         msg.setData(b);
@@ -151,13 +151,13 @@ public class GameThread extends Thread {
         Message msg =mGameStatusHandler.obtainMessage();
        Bundle b =new Bundle();
         b.putInt("visibility",View.INVISIBLE);
-        msg.setData(b);                                               //crt
+        msg.setData(b);
         mGameStatusHandler.sendMessage(msg);
     }
 
     public void setscoretext(String playerscore,String opponentscore){
         Message msg = mScoreHandler.obtainMessage();
-        Bundle b =new Bundle();                                                 //crt
+        Bundle b =new Bundle();
         b.putString("player",playerscore);
         b.putString("opponent",opponentscore);
         msg.setData(b);

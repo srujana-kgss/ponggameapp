@@ -9,9 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black_overlay">#24000000</color>
     
-    <color name="table_color">#555454</color>
-    <color name="player_color">#FF8F00</color>
-    <color name="opponent_color">#0277BD</color>
+    <color name="table_color">#0B0B0B</color>
+    <color name="player_color">#4527A0</color>
+    <color name="opponent_color">#C62828</color>
     <color name="ball_color">#FDF8F8</color>
     
 </resources>

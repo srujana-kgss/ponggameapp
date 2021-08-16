@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ponggameapp">
         <activity android:name=".scorePlayervsComputer"></activity>
-        <activity android:name=".scoreforSingleplayer" />
-        <activity android:name=".MainActivity2" />
+        <activity android:name=".scoreforSingleplayer" android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity2"  android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".pongactivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

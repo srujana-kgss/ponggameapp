@@ -28,16 +28,17 @@
         android:layout_height="65dp"
         android:layout_marginTop="124dp"
         android:layout_marginBottom="116dp"
+        android:fontFamily="@font/averia_sans_libre_light"
         android:gravity="center"
-        android:text="READY"
+        android:text="STARTGAME"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pongtabletwo"
-        app:layout_constraintVertical_bias="0.27" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/playertext"
@@ -47,30 +48,15 @@
         android:layout_marginBottom="244dp"
         android:gravity="center"
         android:text="player"
+        android:fontFamily="@font/bungee_outline"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.251"
+        app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pongtabletwo"
-        app:layout_constraintVertical_bias="0.079" />
-
-
-    <Button
-        android:id="@+id/home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="home"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.618"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.047" />
-
-
+        app:layout_constraintVertical_bias="0.114" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -55,7 +55,7 @@ Integer[] integer = {1,-1};
     public static float  PHY_RACKET_SPEED =15.0f;
     public static float  PHY_BALL_SPEED =15.0f;
 
-    //for AI
+
     private float mAImoveprobability;
     private boolean moving=false;
     private float mlasttouchY;
@@ -93,27 +93,26 @@ Integer[] integer = {1,-1};
      int racketwidtt=a.getInteger(R.styleable.PongTable_racketWidth,100);
      int ballradius=a.getInteger(R.styleable.PongTable_ballRadius,25);
 
-     // set player
+
      Paint playerpaint=new Paint();
      playerpaint.setAntiAlias(true);
      playerpaint.setColor(ContextCompat.getColor(mcontext,R.color.player_color));
      mplayer=new player(racketwidtt,racketheight,playerpaint);
 
 
-     // set opponent
+
      Paint opponentpaint=new Paint();
      opponentpaint.setAntiAlias(true);
      opponentpaint.setColor(ContextCompat.getColor(mcontext,R.color.opponent_color));
      mopponent=new player(racketwidtt,racketheight,opponentpaint);
 
 
-     // set ball
+
      Paint ballpaint=new Paint();
      ballpaint.setAntiAlias(true);
      ballpaint.setColor(ContextCompat.getColor(mcontext,R.color.ball_color));
      mball=new ball(ballradius,ballpaint);
 
-     // draw middle line
      mnetpaint=new Paint();
      mnetpaint.setAntiAlias(true);
      mnetpaint.setColor(Color.WHITE);
@@ -123,7 +122,7 @@ Integer[] integer = {1,-1};
      mnetpaint.setPathEffect(new DashPathEffect(new float[]{5,5},0));
 
 
-     // draw bounds
+
      mTableboundpaint=new Paint();
      mTableboundpaint.setAntiAlias(true);
      mTableboundpaint.setColor(ContextCompat.getColor(mcontext,R.color.player_color));
@@ -143,18 +142,18 @@ Integer[] integer = {1,-1};
 
 
 
-    public pongtable(Context context, AttributeSet attrs) {  //
+    public pongtable(Context context, AttributeSet attrs) {
         super(context, attrs);
         initpongtable(context,attrs);
     }
 
     public pongtable(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initpongtable(context,attrs);  //
+        initpongtable(context,attrs);
     }
 
 
-    @Override                  //crt
+    @Override
     public  void draw(Canvas canvas){
      super.draw(canvas);
      canvas.drawColor(ContextCompat.getColor(mcontext,R.color.table_color));
@@ -288,7 +287,7 @@ public  synchronized void moveplayer(player player,float left,float top){
 
     public void update(Canvas canvas){
 
-    // collission detection code
+
           if(CheckcollisionPlayer(mplayer,mball)){
                handlecollision(mplayer,mball);
                mediaPlayer=MediaPlayer.create(mcontext,R.raw.beep);
@@ -318,7 +317,7 @@ public  synchronized void moveplayer(player player,float left,float top){
     }
 
 
-   private boolean CheckcollisionPlayer(player players,ball balls){ //crt
+   private boolean CheckcollisionPlayer(player players,ball balls){
      return players.bounds.intersects(
              balls.cx-balls.getRadius(),
              balls.cy- balls.getRadius(),
@@ -328,7 +327,7 @@ public  synchronized void moveplayer(player player,float left,float top){
    }
 
 
-    private  boolean checkcollisionwithtoporbottomwall(){  //crt
+    private  boolean checkcollisionwithtoporbottomwall(){
        return ((mball.cy<=mball.getRadius())||(mball.cy+mball.getRadius()>=mtableheight-1));
     }
 
@@ -336,12 +335,12 @@ public  synchronized void moveplayer(player player,float left,float top){
        return mball.cx<=mball.getRadius();
     }
 
-    private boolean checkcollisionwithrightwall(){   //crt
+    private boolean checkcollisionwithrightwall(){
         return mball.cx+mball.getRadius()>=mtablewidth-1;
     }
 
 
-    private  void handlecollision(player player ,ball  ball){  //crt
+    private  void handlecollision(player player ,ball  ball){
     ball.velocity_x=-ball.velocity_x*1.05f;
     if(player==mplayer){
    ball.cx=mplayer.bounds.right+ball.getRadius();
@@ -352,7 +351,7 @@ public  synchronized void moveplayer(player player,float left,float top){
     }
     }
 
-    public void setuptable(){  //crt
+    public void setuptable(){
         placeball();
         placeplayers();
     }
@@ -365,7 +364,7 @@ mopponent.bounds.offsetTo(mtablewidth-mopponent.getRacketwidth()-2,(mtableheight
 
 
 private void placeball(){
-        mball.cx=mtablewidth/2;   //crt
+        mball.cx=mtablewidth/2;
         mball.cy=mtableheight/2;
         mball.velocity_y=integer[x]*((mball.velocity_y/Math.abs(mball.velocity_y))*PHY_BALL_SPEED);
         mball.velocity_x=-(mball.velocity_x/Math.abs(mball.velocity_x))*PHY_BALL_SPEED;
@@ -374,10 +373,10 @@ private void placeball(){
 
   public  player getplayer() {return mplayer;}
    public  player getopponent() {return mopponent;}
-    public  ball getBall() {return mball;}
 
 
-    public void setScorePlayer(TextView view){mScorePlayer=view;}   //crt
+
+    public void setScorePlayer(TextView view){mScorePlayer=view;}
     public void setScoreOpponent(TextView view){mScoreOpponent=view;}
     public void setStatusview(TextView view){mStatus=view;}
 
