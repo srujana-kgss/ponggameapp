@@ -33,7 +33,7 @@ public class ball {
       if(cy<radius){
           cy=radius;
       }else if (cy+radius>=canvas.getHeight()){
-          cy= canvas.getHeight() - radius-1;
+          cy= canvas.getHeight() - radius;
       }
     }
 
